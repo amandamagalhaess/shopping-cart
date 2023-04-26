@@ -1,7 +1,7 @@
-import { searchCep } from './helpers/cepFunctions';
-import { fetchProduct, fetchProductsList } from './helpers/fetchFunctions';
-import { createCartProductElement, createProductElement } from './helpers/shopFunctions';
-import { getSavedCartIDs, saveCartID } from './helpers/cartFunctions';
+import { searchCep } from './helpers/cepFunctions.js';
+import { fetchProduct, fetchProductsList } from './helpers/fetchFunctions.js';
+import { createCartProductElement, createProductElement } from './helpers/shopFunctions.js';
+import { getSavedCartIDs, saveCartID } from './helpers/cartFunctions.js';
 
 const products = document.getElementsByClassName('products')[0];
 const messages = document.getElementById('messages');
