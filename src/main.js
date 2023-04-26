@@ -7,6 +7,16 @@ const products = document.getElementsByClassName('products')[0];
 const messages = document.getElementById('messages');
 const ol = document.getElementsByClassName('cart__products')[0];
 const totalPriceEl = document.getElementsByClassName('total-price')[0];
+const searchInput = document.getElementById('search-input');
+const searchBtn = document.getElementById('search-btn');
+
+searchBtn.addEventListener('click', async () => {
+  products.innerHTML = '';
+  const product = searchInput.value;
+  addLoading();
+  fetchProductsList(product).then(() => removeLoading());
+  addCartProducts(product);
+});
 
 const addLoading = () => {
   const loadingEl = document.createElement('h2');
@@ -19,7 +29,7 @@ addLoading();
 const removeLoading = () => {
   document.getElementsByClassName('loading')[0].remove();
 };
-fetchProductsList('computador').then(() => removeLoading());
+fetchProductsList('produtos').then(() => removeLoading());
 
 const showError = () => {
   const errorEl = document.createElement('h2');
@@ -28,31 +38,44 @@ const showError = () => {
   messages.appendChild(errorEl);
 };
 
-const data = await fetchProductsList('computador');
-if (data !== undefined) {
-  const productsSection = data.map((item) => createProductElement(item));
-  productsSection.forEach((product) => products.appendChild(product));
-} else {
-  showError();
-}
+const showProducts = async (product) => {
+  const data = await fetchProductsList(product);
+  if (data !== undefined) {
+    const productsSection = data.map((item) => createProductElement(item));
+    productsSection.forEach((product) => products.appendChild(product));
+  } else {
+    showError();
+  }
+};
 
-const buttons = document.getElementsByClassName('product__add');
+const addCartProducts = async (product) => {
+  if (product === undefined) {
+    await showProducts('produtos');
+  } else {
+    await showProducts(product);
+  }
+  
+  const buttons = document.getElementsByClassName('product__add');
+  console.log(buttons.length);
 
-for (let index = 0; index < buttons.length; index += 1) {
-  const button = buttons[index];
-  button.addEventListener('click', async () => {
-    const id = button.parentNode.firstChild.innerHTML;
-    saveCartID(id);
-    const productData = await fetchProduct(id);
-    const li = createCartProductElement(productData);
-    ol.appendChild(li);
-    let totalPrice = parseFloat(totalPriceEl.innerHTML);
-    totalPrice += productData.price;
-    totalPriceEl.innerHTML = totalPrice.toFixed(2);
+  for (let index = 0; index < buttons.length; index += 1) {
+    const button = buttons[index];
+    button.addEventListener('click', async () => {
+      const id = button.parentNode.firstChild.innerHTML;
+      saveCartID(id);
+      const productData = await fetchProduct(id);
+      const li = createCartProductElement(productData);
+      ol.appendChild(li);
+      let totalPrice = parseFloat(totalPriceEl.innerHTML);
+      totalPrice += productData.price;
+      totalPriceEl.innerHTML = totalPrice.toFixed(2);
+  
+      localStorage.setItem('totalPrice', JSON.stringify(totalPriceEl.innerHTML));
+    });
+  }
+};
+addCartProducts();
 
-    localStorage.setItem('totalPrice', JSON.stringify(totalPriceEl.innerHTML));
-  });
-}
 if (localStorage.getItem('totalPrice')) {
   totalPriceEl.innerHTML = JSON.parse(localStorage.getItem('totalPrice'));
 } else {
