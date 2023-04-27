@@ -12,7 +12,13 @@ const searchBtn = document.getElementById('search-btn');
 
 searchBtn.addEventListener('click', async () => {
   products.innerHTML = '';
-  const product = searchInput.value;
+  let product;
+  if (searchInput.value === '') {
+    product = 'produtos';
+  } else {
+    product = searchInput.value;
+  }
+
   addLoading();
   fetchProductsList(product).then(() => removeLoading());
   addCartProducts(product);
@@ -56,7 +62,6 @@ const addCartProducts = async (product) => {
   }
   
   const buttons = document.getElementsByClassName('product__add');
-  console.log(buttons.length);
 
   for (let index = 0; index < buttons.length; index += 1) {
     const button = buttons[index];
