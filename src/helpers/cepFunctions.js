@@ -11,7 +11,7 @@ export const getAddress = (cep) => {
 };
 
 export const searchCep = async () => {
-  const cepInput = document.getElementsByClassName('cep-input')[1];
+  const cepInput = document.getElementsByClassName('cep-input')[0];
   const a = document.getElementsByClassName('cart__address')[0];
 
   const data = await getAddress(cepInput.value);
