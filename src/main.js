@@ -9,12 +9,13 @@ const ol = document.getElementsByClassName('cart__products')[0];
 const totalPriceEl = document.getElementsByClassName('total-price')[0];
 const searchInput = document.getElementById('search-input');
 const searchBtn = document.getElementById('search-btn');
+const counter = document.getElementById('counter');
 
 searchBtn.addEventListener('click', async () => {
   products.innerHTML = '';
   let product;
   if (searchInput.value === '') {
-    product = 'produtos';
+    product = 'eletrônicos';
   } else {
     product = searchInput.value;
   }
@@ -35,7 +36,7 @@ addLoading();
 const removeLoading = () => {
   document.getElementsByClassName('loading')[0].remove();
 };
-fetchProductsList('produtos').then(() => removeLoading());
+fetchProductsList('eletrônicos').then(() => removeLoading());
 
 const showError = () => {
   const errorEl = document.createElement('h2');
@@ -56,7 +57,7 @@ const showProducts = async (product) => {
 
 const addCartProducts = async (product) => {
   if (product === undefined) {
-    await showProducts('produtos');
+    await showProducts('eletrônicos');
   } else {
     await showProducts(product);
   }
@@ -75,11 +76,22 @@ const addCartProducts = async (product) => {
       totalPrice += productData.price;
       totalPriceEl.innerHTML = totalPrice.toFixed(2);
 
+      let count = Number(counter.innerHTML);
+      count += 1;
+      counter.innerHTML = count;
+
+      localStorage.setItem('counter', JSON.stringify(counter.innerHTML));
       localStorage.setItem('totalPrice', JSON.stringify(totalPriceEl.innerHTML));
     });
   }
 };
 addCartProducts();
+
+if (localStorage.getItem('counter')) {
+  counter.innerHTML = JSON.parse(localStorage.getItem('counter'));
+} else {
+  totalPriceEl.innerHTML = 0;
+}
 
 if (localStorage.getItem('totalPrice')) {
   totalPriceEl.innerHTML = JSON.parse(localStorage.getItem('totalPrice'));

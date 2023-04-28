@@ -55,6 +55,10 @@ const removeCartProduct = async (li, id) => {
   totalPrice -= productData.price;
   totalPriceEl.innerHTML = totalPrice.toFixed(2);
 
+  const counter = document.getElementById('counter');
+  counter.innerHTML = Number(counter.innerHTML) - 1;
+
+  localStorage.setItem('counter', JSON.stringify(counter.innerHTML));
   localStorage.setItem('totalPrice', JSON.stringify(totalPriceEl.innerHTML));
 };
 
