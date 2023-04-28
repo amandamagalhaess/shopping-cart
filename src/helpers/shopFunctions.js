@@ -118,6 +118,14 @@ export const createProductElement = ({ id, title, thumbnail, price }) => {
 
   section.appendChild(createCustomElement('span', 'product__id', id));
 
+  const cartButton = createCustomElement(
+    'button',
+    'product__add',
+    'add_shopping_cart',
+  );
+  cartButton.classList.add('material-symbols-outlined');
+  section.appendChild(cartButton);
+
   const thumbnailContainer = createCustomElement('div', 'img__container');
   thumbnailContainer.appendChild(createProductImageElement(thumbnail));
   section.appendChild(thumbnailContainer);
@@ -127,13 +135,6 @@ export const createProductElement = ({ id, title, thumbnail, price }) => {
   const priceElement = createCustomElement('span', 'product__price', 'R$ ');
   priceElement.appendChild(createCustomElement('span', 'product__price__value', price));
   section.appendChild(priceElement);
-
-  const cartButton = createCustomElement(
-    'button',
-    'product__add',
-    'Adicionar ao carrinho!',
-  );
-  section.appendChild(cartButton);
 
   return section;
 };
