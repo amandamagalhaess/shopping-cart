@@ -22,6 +22,7 @@ aside {
   background-color: rgb(65, 25, 127);
   box-sizing: border-box;
   display: flex;
+  justify-content: space-between;
   align-items: center;
   width: 100%;
   height: 90px;
@@ -47,9 +48,10 @@ aside {
   display: flex;
   align-items: center;
   justify-content: space-evenly;
-  padding: 0 100px;
+  padding: 0 36px;
   background-color: rgb(0, 213, 226);
   height: 90px;
+  cursor: pointer;
 }
 
 .container-cartTitle span {
@@ -317,10 +319,14 @@ button.search-button {
 }
 
 .cart__address {
-  height: 30px;
   font-size: 16px;
   font-weight: 700;
-  margin: 10px auto;
+  margin: 10px;
+}
+
+i.icon {
+  font-size: 35px;
+  color: rgb(65, 25, 127);
 }
 
 .hidden {
@@ -346,9 +352,40 @@ button.search-button {
   border: 3px solid white;
 }
 
-@media screen and (max-width : 1400px) {
+/* @media screen and (max-width : 1400px) {
 
   .cart {
-    height: 630px;
+    height: 90vh;
+  }
+} */
+
+@media screen and (max-width : 991px) {
+
+  main {
+    width: 100%;
+  }
+
+  .cart {
+    height: 90vh;
+  }
+
+  .open-cart {
+    /* background-color: rgb(0, 213, 226); */
+    height: 90px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 8%;
+  }
+  
+  .open-cart > i {
+    font-size: 30px;
+    color: rgb(0, 213, 226);
+    margin-right: 15px;
+  }
+
+  .logo {
+    width: 200px;
+    margin-left: 15px;
   }
 }

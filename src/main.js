@@ -60,7 +60,7 @@ const addCartProducts = async (product) => {
   } else {
     await showProducts(product);
   }
-  
+
   const buttons = document.getElementsByClassName('product__add');
 
   for (let index = 0; index < buttons.length; index += 1) {
@@ -74,7 +74,7 @@ const addCartProducts = async (product) => {
       let totalPrice = parseFloat(totalPriceEl.innerHTML);
       totalPrice += productData.price;
       totalPriceEl.innerHTML = totalPrice.toFixed(2);
-  
+
       localStorage.setItem('totalPrice', JSON.stringify(totalPriceEl.innerHTML));
     });
   }
