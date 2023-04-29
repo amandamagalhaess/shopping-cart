@@ -26,20 +26,46 @@
       <div class="container-title">
         <img src="./src/imgs/logo.png" class="logo" alt="logo carrinho de compras">
       </div>
+      <div class="search-container">
+        <input type="text" id="search-input" class="search-input" placeholder="Buscar produtos">
+        <span id="search-btn" class="material-symbols-outlined search-button">
+          search
+        </span>
+      </div>
       <div class="open-cart">
-        <i class="material-symbols-outlined icon d-lg-none" data-bs-toggle="offcanvas" data-bs-target="#offcanvasResponsive"
-          aria-controls="offcanvasResponsive">shopping_cart</i>
-          <i class="material-symbols-outlined icon sm-none">shopping_cart</i>
+        <i class="material-symbols-outlined icon d-lg-none" data-bs-toggle="offcanvas"
+          data-bs-target="#offcanvasResponsive" aria-controls="offcanvasResponsive">shopping_cart</i>
+        <i class="material-symbols-outlined icon sm-none">shopping_cart</i>
         <span id="counter" class="cart-counter">0</span>
         <span class="material-symbols-outlined">arrow_left</span>
       </div>
     </header>
-    <div class="search-container">
-      <input type="text" id="search-input" class="search-input" placeholder="Buscar produtos">
-      <span id="search-btn" class="material-symbols-outlined search-button">
-        search
-      </span>
-    </div>
+    <section class="categories">
+      <div class="categorie" id="celulares">
+        <div class="img-container"><img src="./src/imgs/celular.png" class="categorie-icon"></div>
+        <p>Celulares</p>
+      </div>
+      <div class="categorie" id="beleza">
+        <div class="img-container"><img src="./src/imgs/beleza.png" class="categorie-icon"></div>
+        <p>Beleza</p>
+      </div>
+      <div class="categorie" id="televisores">
+        <div class="img-container"><img src="./src/imgs/televisao.png" class="categorie-icon"></div>
+        <p>Televisores</p>
+      </div>
+      <div class="categorie" id="moda">
+        <div class="img-container"><img src="./src/imgs/moda.png" class="categorie-icon"></div>
+        <p>Moda</p>
+      </div>
+      <div class="categorie" id="veiculos">
+        <div class="img-container"><img src="./src/imgs/veiculos.png" class="categorie-icon"></div>
+        <p>Veículos</p>
+      </div>
+      <div class="categorie" id="mercado">
+        <div class="img-container"><img src="./src/imgs/mercado.png" class="categorie-icon"></div>
+        <p>Mercado</p>
+      </div>
+    </section>
     <div id="messages"></div>
     <section class="container">
       <section class="products"></section>
@@ -60,6 +86,7 @@
     <section class="cart">
       <ol class="cart__products"></ol>
       <p class="price">Subtotal <span>R$<span class="total-price">0</span></span></p>
+      <button class="empty-cart">Esvaziar Carrinho</button>
       <input type="text" class="cep-input" placeholder="Digite seu CEP">
       <button class="cep-button cart-button">Buscar CEP</button>
       <span class="cart__address"></span>

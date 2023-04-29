@@ -10,8 +10,15 @@ const totalPriceEl = document.getElementsByClassName('total-price')[0];
 const searchInput = document.getElementById('search-input');
 const searchBtn = document.getElementById('search-btn');
 const counter = document.getElementById('counter');
+const emptyCart = document.querySelector('.empty-cart');
+const celulares = document.getElementById('celulares');
+const beleza = document.getElementById('beleza');
+const televisores = document.getElementById('televisores');
+const moda = document.getElementById('moda');
+const veiculos = document.getElementById('veiculos');
+const mercado = document.getElementById('mercado');
 
-searchBtn.addEventListener('click', async () => {
+const defineProducts = async () => {
   products.innerHTML = '';
   let product;
   if (searchInput.value === '') {
@@ -23,10 +30,25 @@ searchBtn.addEventListener('click', async () => {
   addLoading();
   fetchProductsList(product).then(() => removeLoading());
   addCartProducts(product);
-});
+}
+searchBtn.addEventListener('click', defineProducts);
+
+const productForCategorie = (categorie) => {
+  products.innerHTML = '';
+
+  addLoading();
+  fetchProductsList(categorie).then(() => removeLoading());
+  addCartProducts(categorie);
+}
+celulares.addEventListener('click', () => productForCategorie('celulares'));
+beleza.addEventListener('click', () => productForCategorie('maquiagem'));
+televisores.addEventListener('click', () =>  productForCategorie('televisores'));
+moda.addEventListener('click', () =>  productForCategorie('roupa adulta'));
+veiculos.addEventListener('click', () =>  productForCategorie('veiculos'));
+mercado.addEventListener('click', () =>  productForCategorie('mercado'));
 
 const addLoading = () => {
-  const loadingEl = document.createElement('h2');
+  const loadingEl = document.createElement('p');
   loadingEl.innerHTML = 'carregando...';
   loadingEl.className = 'loading';
   messages.appendChild(loadingEl);
@@ -86,6 +108,18 @@ const addCartProducts = async (product) => {
   }
 };
 addCartProducts();
+
+const clearCart = () => {
+  ol.innerHTML = '';
+  totalPriceEl.innerHTML = 0.00;
+  counter.innerHTML = 0;
+
+  localStorage.setItem('cartProducts', JSON.stringify([]));
+  localStorage.setItem('counter', JSON.stringify(counter.innerHTML));
+  localStorage.setItem('totalPrice', JSON.stringify(totalPriceEl.innerHTML));
+}
+
+emptyCart.addEventListener('click', clearCart)
 
 if (localStorage.getItem('counter')) {
   counter.innerHTML = JSON.parse(localStorage.getItem('counter'));
