@@ -17,12 +17,43 @@ const televisores = document.getElementById('televisores');
 const moda = document.getElementById('moda');
 const veiculos = document.getElementById('veiculos');
 const mercado = document.getElementById('mercado');
+const cartBtn = document.getElementById('cart-icon');
+const main = document.querySelector('main');
+const categories = document.querySelector('.categories');
+const cart = document.querySelector('aside');
+const arrow = document.getElementById('arrow');
+const logo = document.querySelector('.logo');
+const logoSm = document.querySelector('.logo-sm');
+
+logo.addEventListener('click', () => location.reload());
+logoSm.addEventListener('click', () => location.reload());
+
+cartBtn.addEventListener('click', () => {
+    if (cart.classList.contains('hide')) {
+      cart.classList.remove('hide');
+      arrow.classList.remove('hide');
+      categories.classList.remove('categories-width');
+      // cart.style.display = 'none';
+      // arrow.style.display = 'block';
+      // main.style.width = '100%';
+      // categories.style.width = '90%';
+    } else {
+      cart.classList.add('hide');
+      arrow.classList.add('hide');
+      categories.classList.add('categories-width');
+      // cart.style.display = 'block';
+      // arrow.style.display = 'none';
+      // main.style.width = '75%';
+      // categories.style.width = '100%';
+    }
+  }
+);
 
 const defineProducts = async () => {
   products.innerHTML = '';
   let product;
   if (searchInput.value === '') {
-    product = 'eletrônicos';
+    product = 'computadores';
   } else {
     product = searchInput.value;
   }
@@ -33,19 +64,19 @@ const defineProducts = async () => {
 }
 searchBtn.addEventListener('click', defineProducts);
 
-const productForCategorie = (categorie) => {
+const productForCategory = (category) => {
   products.innerHTML = '';
 
   addLoading();
-  fetchProductsList(categorie).then(() => removeLoading());
-  addCartProducts(categorie);
+  fetchProductsList(category).then(() => removeLoading());
+  addCartProducts(category);
 }
-celulares.addEventListener('click', () => productForCategorie('celulares'));
-beleza.addEventListener('click', () => productForCategorie('maquiagem'));
-televisores.addEventListener('click', () =>  productForCategorie('televisores'));
-moda.addEventListener('click', () =>  productForCategorie('roupa adulta'));
-veiculos.addEventListener('click', () =>  productForCategorie('veiculos'));
-mercado.addEventListener('click', () =>  productForCategorie('mercado'));
+celulares.addEventListener('click', () => productForCategory('celulares'));
+beleza.addEventListener('click', () => productForCategory('maquiagem'));
+televisores.addEventListener('click', () => productForCategory('televisores'));
+moda.addEventListener('click', () => productForCategory('roupa adulta'));
+veiculos.addEventListener('click', () => productForCategory('veiculos'));
+mercado.addEventListener('click', () => productForCategory('mercado'));
 
 const addLoading = () => {
   const loadingEl = document.createElement('p');
@@ -58,7 +89,7 @@ addLoading();
 const removeLoading = () => {
   document.getElementsByClassName('loading')[0].remove();
 };
-fetchProductsList('eletrônicos').then(() => removeLoading());
+fetchProductsList('computadores').then(() => removeLoading());
 
 const showError = () => {
   const errorEl = document.createElement('h2');
@@ -79,7 +110,7 @@ const showProducts = async (product) => {
 
 const addCartProducts = async (product) => {
   if (product === undefined) {
-    await showProducts('eletrônicos');
+    await showProducts('computadores');
   } else {
     await showProducts(product);
   }
