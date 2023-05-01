@@ -1,7 +1,7 @@
 import { searchCep } from './helpers/cepFunctions.js';
 import { fetchProduct, fetchProductsList } from './helpers/fetchFunctions.js';
 import { createCartProductElement, createProductElement } from './helpers/shopFunctions.js';
-import { getSavedCartIDs, saveCartID } from './helpers/cartFunctions.js';
+import { getSavedCartIDs, saveCartID, saveQuantity } from './helpers/cartFunctions.js';
 
 const products = document.getElementsByClassName('products')[0];
 const messages = document.getElementById('messages');
@@ -18,7 +18,6 @@ const moda = document.getElementById('moda');
 const veiculos = document.getElementById('veiculos');
 const mercado = document.getElementById('mercado');
 const cartBtn = document.getElementById('cart-icon');
-const main = document.querySelector('main');
 const categories = document.querySelector('.categories');
 const cart = document.querySelector('aside');
 const arrow = document.getElementById('arrow');
@@ -29,24 +28,16 @@ logo.addEventListener('click', () => location.reload());
 logoSm.addEventListener('click', () => location.reload());
 
 cartBtn.addEventListener('click', () => {
-    if (cart.classList.contains('hide')) {
-      cart.classList.remove('hide');
-      arrow.classList.remove('hide');
-      categories.classList.remove('categories-width');
-      // cart.style.display = 'none';
-      // arrow.style.display = 'block';
-      // main.style.width = '100%';
-      // categories.style.width = '90%';
-    } else {
-      cart.classList.add('hide');
-      arrow.classList.add('hide');
-      categories.classList.add('categories-width');
-      // cart.style.display = 'block';
-      // arrow.style.display = 'none';
-      // main.style.width = '75%';
-      // categories.style.width = '100%';
-    }
+  if (cart.classList.contains('hide')) {
+    cart.classList.remove('hide');
+    arrow.classList.remove('hide');
+    categories.classList.remove('categories-width');
+  } else {
+    cart.classList.add('hide');
+    arrow.classList.add('hide');
+    categories.classList.add('categories-width');
   }
+}
 );
 
 const defineProducts = async () => {
@@ -60,7 +51,7 @@ const defineProducts = async () => {
 
   addLoading();
   fetchProductsList(product).then(() => removeLoading());
-  addCartProducts(product);
+  addProducts(product);
 }
 searchBtn.addEventListener('click', defineProducts);
 
@@ -69,7 +60,7 @@ const productForCategory = (category) => {
 
   addLoading();
   fetchProductsList(category).then(() => removeLoading());
-  addCartProducts(category);
+  addProducts(category);
 }
 celulares.addEventListener('click', () => productForCategory('celulares'));
 beleza.addEventListener('click', () => productForCategory('maquiagem'));
@@ -108,7 +99,54 @@ const showProducts = async (product) => {
   }
 };
 
-const addCartProducts = async (product) => {
+const toastLiveExample = document.getElementById('liveToast');
+const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
+
+const addCartProducts = async (button) => {
+  toastBootstrap.show();
+
+  setTimeout(() => {
+    toastLiveExample.classList.add('showing');
+    setTimeout(() => {
+      toastLiveExample.classList.remove('showing');
+      toastLiveExample.classList.remove('show');
+      toastLiveExample.classList.add('hide');
+    }, 200);
+  }, 2000);
+
+  const lis = document.getElementsByClassName('cart__product');
+  const lisArr = [...lis];
+
+  const productName = button.parentNode.lastChild.previousSibling.innerHTML;
+  const productCart = lisArr.find((li) => li.firstChild.nextSibling.firstChild.innerHTML === productName);
+
+  const id = button.parentNode.firstChild.innerHTML;
+  const productData = await fetchProduct(id);
+
+  if (productCart === undefined) {
+    saveCartID(id);
+    const li = createCartProductElement(productData);
+    ol.appendChild(li);
+  } else {
+    let productQty = productCart.firstChild.nextSibling.lastChild.firstChild.nextSibling;
+    saveQuantity(productQty.innerHTML, id);
+
+    productQty.innerHTML = Number(productQty.innerHTML) + 1;
+  }
+
+  let totalPrice = parseFloat(totalPriceEl.innerHTML);
+  totalPrice += productData.price;
+  totalPriceEl.innerHTML = totalPrice.toFixed(2);
+
+  let count = Number(counter.innerHTML);
+  count += 1;
+  counter.innerHTML = count;
+
+  localStorage.setItem('counter', JSON.stringify(counter.innerHTML));
+  localStorage.setItem('totalPrice', JSON.stringify(totalPriceEl.innerHTML));
+};
+
+const addProducts = async (product) => {
   if (product === undefined) {
     await showProducts('computadores');
   } else {
@@ -119,38 +157,22 @@ const addCartProducts = async (product) => {
 
   for (let index = 0; index < buttons.length; index += 1) {
     const button = buttons[index];
-    button.addEventListener('click', async () => {
-      const id = button.parentNode.firstChild.innerHTML;
-      saveCartID(id);
-      const productData = await fetchProduct(id);
-      const li = createCartProductElement(productData);
-      ol.appendChild(li);
-      let totalPrice = parseFloat(totalPriceEl.innerHTML);
-      totalPrice += productData.price;
-      totalPriceEl.innerHTML = totalPrice.toFixed(2);
-
-      let count = Number(counter.innerHTML);
-      count += 1;
-      counter.innerHTML = count;
-
-      localStorage.setItem('counter', JSON.stringify(counter.innerHTML));
-      localStorage.setItem('totalPrice', JSON.stringify(totalPriceEl.innerHTML));
-    });
+    button.addEventListener('click', () => addCartProducts(button));
   }
 };
-addCartProducts();
+addProducts();
 
 const clearCart = () => {
   ol.innerHTML = '';
   totalPriceEl.innerHTML = 0.00;
   counter.innerHTML = 0;
 
+  localStorage.setItem('quantity', JSON.stringify([]));
   localStorage.setItem('cartProducts', JSON.stringify([]));
   localStorage.setItem('counter', JSON.stringify(counter.innerHTML));
   localStorage.setItem('totalPrice', JSON.stringify(totalPriceEl.innerHTML));
 }
-
-emptyCart.addEventListener('click', clearCart)
+emptyCart.addEventListener('click', clearCart);
 
 if (localStorage.getItem('counter')) {
   counter.innerHTML = JSON.parse(localStorage.getItem('counter'));
@@ -171,6 +193,11 @@ Promise.all(productsData).then((values) => {
   values.forEach((value) => {
     const li = createCartProductElement(value);
     ol.appendChild(li);
+
+    const quantity = [...document.getElementsByClassName('product-qty')];
+    quantity.forEach((q, index) => {
+      q.innerHTML = JSON.parse(localStorage.getItem('quantity'))[index];
+    })
   });
 });
 

@@ -1,4 +1,4 @@
-import { removeCartID } from './cartFunctions.js';
+import { removeCartID, removeQty, saveQuantity } from './cartFunctions.js';
 import { fetchProduct } from './fetchFunctions.js';
 
 // Esses comentários que estão antes de cada uma das funções são chamados de JSdoc,
@@ -46,13 +46,36 @@ export const getIdFromProduct = (product) => (
  * @param {Element} li - Elemento do produto a ser removido do carrinho.
  * @param {string} id - ID do produto a ser removido do carrinho.
  */
-const removeCartProduct = async (li, id) => {
+const removeCartProduct = async (li, id, span) => {
   li.remove();
   removeCartID(id);
   const productData = await fetchProduct(id);
   const totalPriceEl = document.getElementsByClassName('total-price')[0];
   let totalPrice = parseFloat(totalPriceEl.innerHTML);
-  totalPrice -= productData.price;
+  totalPrice -= (productData.price) * Number(span.innerHTML);
+  totalPriceEl.innerHTML = totalPrice.toFixed(2);
+
+  const counter = document.getElementById('counter');
+  counter.innerHTML = Number(counter.innerHTML) - Number(span.innerHTML);
+
+  localStorage.setItem('counter', JSON.stringify(counter.innerHTML));
+  localStorage.setItem('totalPrice', JSON.stringify(totalPriceEl.innerHTML));
+};
+
+const removeCartQty = async (li, id, span) => {
+
+  if (Number(span.innerHTML) > 1) {
+    removeQty(span.innerHTML, id);
+    span.innerHTML = Number(span.innerHTML) - 1;
+  } else {
+    li.remove();
+    removeCartID(id);
+  }
+
+  const productData = await fetchProduct(id);
+  const totalPriceEl = document.getElementsByClassName('total-price')[0];
+  let totalPrice = parseFloat(totalPriceEl.innerHTML);
+  totalPrice -= (productData.price);
   totalPriceEl.innerHTML = totalPrice.toFixed(2);
 
   const counter = document.getElementById('counter');
@@ -60,7 +83,28 @@ const removeCartProduct = async (li, id) => {
 
   localStorage.setItem('counter', JSON.stringify(counter.innerHTML));
   localStorage.setItem('totalPrice', JSON.stringify(totalPriceEl.innerHTML));
-};
+}
+
+const addCartQty = async (id, span) => {
+  saveQuantity(span.innerHTML, id);
+  span.innerHTML = Number(span.innerHTML) + 1;
+
+  const totalPriceEl = document.getElementsByClassName('total-price')[0];
+  const counter = document.getElementById('counter');
+
+  const productData = await fetchProduct(id);
+
+  let totalPrice = parseFloat(totalPriceEl.innerHTML);
+  totalPrice += productData.price;
+  totalPriceEl.innerHTML = totalPrice.toFixed(2);
+
+  let count = Number(counter.innerHTML);
+  count += 1;
+  counter.innerHTML = count;
+
+  localStorage.setItem('counter', JSON.stringify(counter.innerHTML));
+  localStorage.setItem('totalPrice', JSON.stringify(totalPriceEl.innerHTML));
+}
 
 /**
  * Função responsável por criar e retornar um product do carrinho.
@@ -99,7 +143,19 @@ export const createCartProductElement = ({ id, title, price, pictures }) => {
   );
   li.appendChild(removeButton);
 
-  li.addEventListener('click', () => removeCartProduct(li, id));
+  const qty = createCustomElement('div', 'qty');
+  const removeQty = createCustomElement('button', 'remove-qty', '-');
+  qty.appendChild(removeQty);
+  const span = createCustomElement('span', 'product-qty', '1');
+  qty.appendChild(span);
+  const addQty = createCustomElement('button', 'add-qty', '+');
+  qty.appendChild(addQty);
+  infoContainer.appendChild(qty);
+
+  addQty.addEventListener('click', () => addCartQty(id, span));
+  removeQty.addEventListener('click', () => removeCartQty(li, id, span));
+  removeButton.addEventListener('click', () => removeCartProduct(li, id, span));
+
   return li;
 };
 

@@ -17,6 +17,8 @@ export const saveCartID = (id) => {
   const cartProducts = getSavedCartIDs();
   const newCartProducts = [...cartProducts, id];
   localStorage.setItem('cartProducts', JSON.stringify(newCartProducts));
+
+  localStorage.setItem('quantity', JSON.stringify([...getSavedQuantity(), 1]));
 };
 
 /**
@@ -30,4 +32,49 @@ export const removeCartID = (id) => {
   const indexProduct = cartProducts.indexOf(id);
   cartProducts.splice(indexProduct, 1);
   localStorage.setItem('cartProducts', JSON.stringify(cartProducts));
+
+  const quantity = [...getSavedQuantity()];
+  quantity.splice(indexProduct, 1);
+  localStorage.setItem('quantity', JSON.stringify(quantity));
+};
+
+export const getSavedQuantity = () => {
+  const quantity = localStorage.getItem('quantity');
+  return quantity ? JSON.parse(quantity) : [];
+};
+
+export const saveQuantity = (span, id) => {
+
+  const cartProducts = [...getSavedCartIDs()];
+  const indexProduct = cartProducts.indexOf(id);
+
+  const quantity = getSavedQuantity();
+
+  const quantityPlus = quantity.map((q, index) => {
+    if (index == indexProduct) {
+      return Number(q) + 1;
+    }
+    return Number(q);
+  });
+
+  const newQuantity = [...quantityPlus];
+  localStorage.setItem('quantity', JSON.stringify(newQuantity));
+};
+
+export const removeQty = (span, id) => {
+
+  const cartProducts = [...getSavedCartIDs()];
+  const indexProduct = cartProducts.indexOf(id);
+
+  const quantity = getSavedQuantity();
+
+  const quantityPlus = quantity.map((q, index) => {
+    if (index == indexProduct) {
+      return Number(q) - 1;
+    }
+    return Number(q);
+  });
+
+  const newQuantity = [...quantityPlus];
+  localStorage.setItem('quantity', JSON.stringify(newQuantity));
 };
